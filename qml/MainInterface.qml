@@ -1,7 +1,8 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.2
+import QtQuick.Controls 1.0
 import QtQuick.Dialogs 1.0
 import he.qt.FileList 1.0
+import QtQuick.Window 2.0
 Rectangle {
     id: mainInterface;
     color: "#EAEAEA"
@@ -33,6 +34,73 @@ Rectangle {
             font.pixelSize: 36;
             color: "#ffffff";
 
+        }
+
+        Row{
+            id:top_right_menu
+            anchors.right: parent.right
+            anchors.rightMargin: 24
+            spacing: 24
+            anchors.verticalCenter: parent.verticalCenter
+            ButtonTool{
+                id: minimize_button;
+                height: 24;
+                width: 24;
+                state: "normal"
+
+                sNormalImage:"image/minimize_@1x.png";
+                sPressedImage: "image/minimize2_@1x.png";
+                sHoverImage: "image/minimize2_@1x.png";
+
+                onRelease: {
+                    mainwindow.showMinimized();
+                }
+
+            }
+
+            ButtonTool{
+                id: maximize_button;
+                height: 24;
+                width: 24;
+                state: "normal"
+                property var state1: 0
+
+
+                sNormalImage:"image/maximize_@1x.png";
+                sPressedImage: "image/maximize2_@1x.png";
+                sHoverImage: "image/maximize2_@1x.png";
+
+                onRelease: {
+                    if(state1===0)
+                    {
+                        mainwindow.showMaximized();
+                        state1=1-state1;
+                    }
+                    else{
+                        mainwindow.visibility=Window.Windowed
+                        state1=1-state1;
+                    }
+
+                }
+
+            }
+
+            ButtonTool{
+                id: close_button;
+                height: 24;
+                width: 24;
+                state: "normal"
+
+
+                sNormalImage:"image/close_@1x.png";
+                sPressedImage: "image/close2_@1x.png";
+                sHoverImage: "image/close2_@1x.png";
+
+                onRelease: {
+                    mainwindow.close();
+                }
+
+            }
         }
 
     }
@@ -211,6 +279,8 @@ Rectangle {
             id:list;
             anchors.fill: parent;
             anchors.top: parent.top;
+            imageShowArea: imageShowArea;
+            fileList: fileList;
         }
 
 //        Text {
@@ -346,7 +416,8 @@ Rectangle {
                 if(fileList.fileIndex < 0){
                     fileList.fileIndex = fileList.sizeOffileList - 1;
                 }
-                    imageShowArea.imagePath = fileList.fileList[fileList.fileIndex];
+//                    imageShowArea.imagePath = fileList.fileList[fileList.fil eIndex];
+                list.children[fileList.fileIndex].release(fileList.fileIndex);
             }
         }
 
@@ -363,7 +434,8 @@ Rectangle {
                 if(fileList.fileIndex > fileList.sizeOffileList - 1){
                     fileList.fileIndex = 0
                 }
-                imageShowArea.imagePath = fileList.fileList[fileList.fileIndex];
+//                imageShowArea.imagePath = fileList.fileList[fileList.fileIndex];
+                list.children[fileList.fileIndex].release(fileList.fileIndex);
             }
         }
 
@@ -415,6 +487,9 @@ Rectangle {
             sPressedImage:"image/amplification1_@1x.png";
             sHoverImage:"image/amplification1_@1x.png";
             sText: "放大"
+            onRelease: {
+                imageShowArea.zoomIn();
+            }
         }
 
         ButtonTool{
@@ -425,6 +500,9 @@ Rectangle {
             sPressedImage:"image/minifier1_@1x.png";
             sHoverImage:"image/minifier1_@1x.png";
             sText: "缩小"
+            onRelease: {
+                imageShowArea.zoomOut();
+            }
         }
 
         ButtonTool{
@@ -441,26 +519,143 @@ Rectangle {
     New_Button{
         id: fileButton;
         height: 40;
-        width: 50;
+        width: 76;
         anchors.left: parent.left;
-        anchors.top: topbackground.bottom;
-        anchors.topMargin: 5;
-        anchors.leftMargin: 40;
-        anchors.verticalCenter: parent.verticalCenter;
+        anchors.top: topbackground2.top;
+        //anchors.topMargin: 5;
+        //anchors.leftMargin: 14;
+        //anchors.verticalCenter: topbackground2.verticalCenter;
+        //anchors.horizontalCenter: parent.horizontalCenter;
         sText: "文件"
+        onRelease: fileButton_list.visible=true
+
+
     }
 
+    Rectangle
+    {
+        id: fileButton_list;
+        visible: false
+        width: 200;
+        z:2
+        height: 30 * 4
+        anchors.top:topbackground2.bottom
+        //anchors.topMargin: 100//上面定义的“文件按钮有问题，此处-800修正”
+        anchors.left:functionalButtonList.left
+        color: "black"
+
+        Column
+        {
+            id: file_button_list;
+            anchors.top: parent.top;
+            spacing: 0
+
+            Menu_button_top
+            {
+                width: 200;
+                height: 30;
+                nTextSize: 16;
+                sTextText: "打开";
+                state: "normal";
+                nIndex: 4;
+                onMenuButtonIndexBack:
+                {
+        //            qDebug("clicked");
+                    imageItem.openImage();
+        //            imageItem.processImage();
+                }
+            }
+            Menu_button_top
+            {
+                width: 200;
+                height: 30;
+                nTextSize: 16;
+                sTextText: "保存";
+                state: "normal";
+                nIndex: 5;
+            }
+            Menu_button_top
+            {
+                width: 200;
+                height: 30;
+                nTextSize: 16;
+                sTextText: "另存为";
+                state: "normal";
+                nIndex: 6;
+            }
+            Menu_button_top
+            {
+                width: 200;
+                height: 30;
+                nTextSize: 16;
+                sTextText: "退出";
+                state: "normal";
+                nIndex: 7;
+            }
+        }
+    }
+
+
     New_Button{
+
         id: helpButton;
         height: 40;
-        width: 50;
+        width: 76;
         anchors.left: fileButton.right;
-        anchors.top: topbackground.bottom;
-        anchors.topMargin: 5;
-        anchors.leftMargin: 30;
-        anchors.verticalCenter: parent.verticalCenter;
+        anchors.top: topbackground2.top;
         sText: "帮助"
+        onRelease: helpbutton_list.visible=true
     }
+
+    Rectangle
+    {
+        id: helpbutton_list;
+        visible: false
+        width: 200;
+        z:2
+        height: 30 * 2
+        anchors.top:topbackground2.bottom
+        //anchors.topMargin: 100//上面定义的“文件按钮有问题，此处-800修正”
+        anchors.left:functionalButtonList.left
+        anchors.leftMargin: 100
+        color: "black"
+
+        Column
+        {
+            id: help_button_list;
+            anchors.top: parent.top;
+            spacing: 0
+
+            Menu_button_top
+            {
+                width: 200;
+                height: 30;
+                nTextSize: 16;
+                sTextText: "软件使用说明";
+                state: "normal";
+                nIndex: 4;
+                onMenuButtonIndexBack:
+                {
+        //            qDebug("clicked");
+                    imageItem.openImage();
+        //            imageItem.processImage();
+                }
+            }
+            Menu_button_top
+            {
+                width: 200;
+                height: 30;
+                nTextSize: 16;
+                sTextText: "版本信息";
+                state: "normal";
+                nIndex: 5;
+            }
+
+        }
+    }
+
+
+
     //图片显示区域
     ImageShowArea{
         id:imageShowArea;
@@ -477,6 +672,23 @@ Rectangle {
 //        anchors.bottomMargin: 100;
 
     }
+//    New_Cnavas {
+//        id:mainCanvas;
+//        visible: true
+//        width: 1220
+//        height: 709
+
+//        //        anchors.centerIn: parent;
+//        anchors.left: functionalbackground.right;
+//        //        anchors.leftMargin: 100;
+//        anchors.right: parent.right;
+//        anchors.rightMargin: 430;
+//        anchors.top: topbackground2.bottom;
+//        //        anchors.topMargin: 100;
+//        anchors.bottom: bottombackground.top;
+//        //        anchors.bottomMargin: 100;
+
+//    }
     //图片文件选择窗口
     FileDialog {
           id: fileDialog
@@ -491,6 +703,7 @@ Rectangle {
               imageShowArea.imagePath = fileList.fileList[fileList.fileIndex];
               imageShowArea.imagecontrol(1)
               //fileListText.text = fileList.printFileUrls();
+              list.destroyListButton();
               for(var i = 0;i < fileList.sizeOffileList; i++){
                   list.createListButton(fileList.fileList[i]);
               }
@@ -502,5 +715,30 @@ Rectangle {
               fileDialog.close();
           }
       }
+    MouseArea
+    {
+        id:menuAllMouseArea;
+        visible: false;
+        z:-1;
+
+
+        width: mainwindow.width;
+        height: mainwindow.height;
+
+        onClicked:
+        {
+            fileButton_list.visible=false;
+            helpbutton_list.visible=false;
+            console.log("visible");
+            menuAllMouseArea.visible = false;
+            console.log("set success");
+
+        }
+
+    }
+
+
 
 }
+
+

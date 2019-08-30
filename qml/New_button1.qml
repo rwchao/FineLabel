@@ -1,11 +1,12 @@
 import QtQuick 2.0
 
 Rectangle {
-    id: new_Button;
+    id: new_Button1;
     color: "transparent";
 
     property var sPresseImage: "";
     property var sNormalImage: "";
+    property var sHoverImage:"";
     property var sText: "";
     property var nIndex: 0;
     property var fontsize:24
@@ -19,14 +20,10 @@ Rectangle {
     Text{
         id: buttonText;
         anchors.fill: parent;
-        x:0
-        y:0
-        //horizontalAlignment: parent.horizontalCenter;
-        //verticalAlignment: parent.verticalCenter;
-        //anchors.verticalCenter: parent.verticalCenter;
-        //anchors.horizontalCenter: parent.horizontalCenter;
-        horizontalAlignment: Text.AlignHCenter;
-        verticalAlignment: Text.AlignVCenter;
+        horizontalAlignment: Text.horizontalCenter;
+        verticalAlignment: Text.verticalCenter;
+        anchors.verticalCenter: parent.verticalCenter;
+        anchors.horizontalCenter: parent.horizontalCenter;
         text: sText;
         font.pixelSize: fontsize;
         color: textColor;
@@ -37,24 +34,22 @@ Rectangle {
 
         acceptedButtons: Qt.LeftButton;
         onPressed: {
-            menuAllMouseArea.visible = true;
-            new_Button.state === "pressed" ? new_Button.state = "hover": new_Button.state = "pressed";
+            new_Button1.state = "pressed";
         }
 
         onReleased: {
           release(nIndex)
-          new_Button.state = "normal";
         }
         onEntered: {
-            if(new_Button.state === "normal")
+            if(new_Button1.state === "normal")
             {
-                new_Button.state = "hover"
+                new_Button1.state = "hover"
             }
         }
         onExited:
         {
-            if(new_Button.state === "hover"){
-                new_Button.state = "normal";
+            if(new_Button1.state === "hover"){
+                new_Button1.state = "normal";
             }
         }
     }
@@ -62,23 +57,24 @@ Rectangle {
         State{
             name:"normal";
             PropertyChanges {
-                target: buttonText;
-                color:textColor;
+                target: new_Button1;
+                color:"transparent";
 
             }
+
         },
         State{
             name:"pressed";
             PropertyChanges {
-                target: buttonText;
-                color:"red";
+                target: new_Button1;
+                color:"#3a5fcd";
             }
         },
         State{
             name:"hover";
             PropertyChanges {
-                target: buttonText;
-                color:"red";
+                target: new_Button1;
+                color:"#3a5fcd";
             }
         }
 
